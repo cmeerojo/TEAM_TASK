@@ -112,17 +112,24 @@ export default function AdminTasksPage() {
   };
 
   return (
-    <Container>
-      <Typography variant="h4" sx={{ mt: 3 }}>
-        Manage Tasks
-      </Typography>
+    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh" }}>
+      <Box sx={{ maxWidth: "1200px", mx: "auto" }}>
+        {/* HEADER */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+            Manage Tasks
+          </Typography>
+          <Typography color="text.secondary" variant="body2">
+            View and edit all tasks assigned to your team.
+          </Typography>
+        </Box>
 
-      {/* TABLE */}
-      <TableContainer component={Paper} sx={{ mt: 3 }}>
-        <Table>
-
-          <TableHead>
-            <TableRow>
+        {/* TABLE */}
+        <Paper sx={{ borderRadius: 3, boxShadow: "0 4px 12px rgba(0,0,0,0.08)", overflow: "hidden" }}>
+          <TableContainer>
+            <Table>
+              <TableHead sx={{ background: "#f8fafc" }}>
+                <TableRow sx={{ borderBottom: "2px solid #e2e8f0" }}>
               <TableCell>Title</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Assigned</TableCell>
@@ -133,7 +140,7 @@ export default function AdminTasksPage() {
 
           <TableBody>
             {tasks.map((task) => (
-              <TableRow key={task.id}>
+              <TableRow key={task.id} sx={{ borderBottom: "1px solid #f1f5f9", "&:hover": { background: "#f8fafc" } }}>
 
                 <TableCell>{task.title}</TableCell>
 
@@ -149,48 +156,46 @@ export default function AdminTasksPage() {
 
                 <TableCell>{task.creator?.name}</TableCell>
 
-                {/* 🔥 PILL BUTTONS */}
                 <TableCell>
                   <Box sx={{ display: "flex", gap: 1 }}>
-
-                    {/* EDIT PILL */}
                     <Button
                       onClick={() => handleOpen(task)}
-                      variant="contained"
+                      variant="outlined"
+                      size="small"
                       startIcon={<EditIcon />}
                       sx={{
-                        borderRadius: "50px",
+                        borderRadius: 2,
                         textTransform: "none",
-                        px: 2,
-                        py: 0.5,
-                        backgroundColor: "#3b82f6",
+                        fontWeight: 600,
+                        borderColor: "#3b82f6",
+                        color: "#3b82f6",
                         "&:hover": {
-                          backgroundColor: "#2563eb",
+                          background: "#eff6ff",
+                          borderColor: "#2563eb",
                         },
                       }}
                     >
                       Edit
                     </Button>
-
-                    {/* DELETE PILL */}
                     <Button
                       onClick={() => handleDelete(task.id)}
-                      variant="contained"
+                      variant="outlined"
+                      size="small"
                       startIcon={<DeleteIcon />}
                       sx={{
-                        borderRadius: "50px",
+                        borderRadius: 2,
                         textTransform: "none",
-                        px: 2,
-                        py: 0.5,
-                        backgroundColor: "#ef4444",
+                        fontWeight: 600,
+                        borderColor: "#ef4444",
+                        color: "#ef4444",
                         "&:hover": {
-                          backgroundColor: "#dc2626",
+                          background: "#fef2f2",
+                          borderColor: "#dc2626",
                         },
                       }}
                     >
                       Delete
                     </Button>
-
                   </Box>
                 </TableCell>
 
@@ -198,24 +203,26 @@ export default function AdminTasksPage() {
             ))}
           </TableBody>
 
-        </Table>
-      </TableContainer>
+            </Table>
+          </TableContainer>
+        </Paper>
 
-      {/* MODAL */}
-      <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "white",
-            p: 4,
-            borderRadius: 2,
-          }}
-        >
-          <Typography>Edit Task</Typography>
+        {/* MODAL */}
+        <Modal open={open} onClose={handleClose}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: { xs: "90%", sm: 450 },
+              bgcolor: "white",
+              p: 4,
+              borderRadius: 3,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>Edit Task</Typography>
 
           <TextField
             fullWidth
@@ -261,13 +268,13 @@ export default function AdminTasksPage() {
             </Select>
           </FormControl>
 
-          <Button sx={{ mt: 2 }} variant="contained" onClick={handleUpdate}>
-            Save
-          </Button>
+            <Button sx={{ mt: 2 }} variant="contained" onClick={handleUpdate}>
+              Save
+            </Button>
 
-        </Box>
-      </Modal>
-
-    </Container>
+          </Box>
+        </Modal>
+      </Box>
+    </Box>
   );
 }

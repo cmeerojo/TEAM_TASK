@@ -94,20 +94,36 @@ export default function AdminEmployeesPage() {
   };
 
   return (
-    <Container>
-      <Typography variant="h4" sx={{ mt: 3 }}>
-        Employees
-      </Typography>
+    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh" }}>
+      <Box sx={{ maxWidth: "1200px", mx: "auto" }}>
+        {/* HEADER */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+            Employees
+          </Typography>
+          <Typography color="text.secondary" variant="body2">
+            View employee profiles and task assignments.
+          </Typography>
+        </Box>
 
-      {/* EMPLOYEE GRID */}
-      <Grid container spacing={2} sx={{ mt: 2 }}>
+        {/* EMPLOYEE GRID */}
+        <Grid container spacing={3}>
         {employees.map((emp) => (
           <Grid item xs={12} md={4} key={emp.id}>
             <Card
               onClick={() => handleOpen(emp)}
-              sx={{ cursor: "pointer" }}
+              sx={{
+                cursor: "pointer",
+                borderRadius: 3,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+                },
+              }}
             >
-              <CardContent>
+              <CardContent sx={{ p: 3 }}>
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 
@@ -135,8 +151,8 @@ export default function AdminEmployeesPage() {
       </Grid>
 
       {/* EMPLOYEE DETAIL DRAWER */}
-      <Drawer anchor="right" open={open} onClose={handleClose}>
-        <Box sx={{ width: 350, p: 3 }}>
+      <Drawer anchor="right" open={open} onClose={handleClose} PaperProps={{ sx: { borderRadius: "16px 0 0 16px", width: { xs: "100%", sm: 380 } } }}>
+        <Box sx={{ p: 4, height: "100%", overflowY: "auto" }}>
 
           {selectedEmployee && (
             <>
@@ -222,6 +238,7 @@ export default function AdminEmployeesPage() {
         </Box>
       </Drawer>
 
-    </Container>
+    </Box>
+    </Box>
   );
 }

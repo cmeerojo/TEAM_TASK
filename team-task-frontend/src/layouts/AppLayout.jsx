@@ -6,6 +6,7 @@ import {
   Button,
   Box,
   Avatar,
+  Stack,
 } from "@mui/material";
 import { getUser, logout } from "../auth/auth";
 
@@ -25,33 +26,126 @@ export default function AppLayout() {
   return (
     <>
       {/* NAVBAR */}
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar
+        position="static"
+        sx={{
+          background: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        }}
+      >
+        <Toolbar sx={{ px: { xs: 2, md: 3 }, py: 1 }}>
 
           {/* LEFT: BRAND */}
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Team Task Manager
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexGrow: 1 }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: 700,
+                color: "white",
+                fontSize: "20px",
+              }}
+            >
+              T
+            </Box>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                background: "linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Task Manager
+            </Typography>
+          </Box>
 
           {/* CENTER NAV */}
-          <Box sx={{ display: "flex", gap: 2, flexGrow: 1 }}>
+          <Box sx={{ display: "flex", gap: 0.5, flexGrow: 1, justifyContent: "center", mx: 2 }}>
 
             {user?.role === "admin" ? (
               <>
-                <Button color="inherit" onClick={() => goTo("/admin")}>
+                <Button
+                  color="inherit"
+                  onClick={() => goTo("/admin")}
+                  sx={{
+                    fontWeight: 600,
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      background: "rgba(255,255,255,0.15)",
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                >
                   Dashboard
                 </Button>
 
-                <Button color="inherit" onClick={() => goTo("/admin/tasks")}>
+                <Button
+                  color="inherit"
+                  onClick={() => goTo("/admin/tasks")}
+                  sx={{
+                    fontWeight: 600,
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      background: "rgba(255,255,255,0.15)",
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                >
                   Tasks
                 </Button>
 
-                <Button color="inherit" onClick={() => goTo("/admin/employees")}>
+                <Button
+                  color="inherit"
+                  onClick={() => goTo("/admin/employees")}
+                  sx={{
+                    fontWeight: 600,
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      background: "rgba(255,255,255,0.15)",
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                >
                   Employees
                 </Button>
               </>
             ) : (
-              <Button color="inherit" onClick={() => goTo("/employee")}>
+              <Button
+                color="inherit"
+                onClick={() => goTo("/employee")}
+                sx={{
+                  fontWeight: 600,
+                  px: 2,
+                  py: 1,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    background: "rgba(255,255,255,0.15)",
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
                 My Tasks
               </Button>
             )}
@@ -59,25 +153,62 @@ export default function AppLayout() {
           </Box>
 
           {/* RIGHT: PROFILE */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
 
-            <Avatar src={user?.avatar_url}>
+            <Avatar
+              src={user?.avatar_url}
+              sx={{
+                width: 36,
+                height: 36,
+                border: "2px solid rgba(255,255,255,0.3)",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  border: "2px solid rgba(255,255,255,0.6)",
+                },
+              }}
+            >
               {user?.name?.charAt(0)}
             </Avatar>
 
-           <Button
-  color="inherit"
-  onClick={() => goTo("/profile")}
-  sx={{ textTransform: "none" }}
->
-  {user?.name}
-</Button>
+            <Button
+              color="inherit"
+              onClick={() => goTo("/profile")}
+              sx={{
+                fontWeight: 600,
+                textTransform: "none",
+                borderRadius: 2,
+                px: 2,
+                py: 1,
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  background: "rgba(255,255,255,0.15)",
+                  transform: "translateY(-2px)",
+                },
+              }}
+            >
+              {user?.name}
+            </Button>
 
-            <Button color="inherit" onClick={handleLogout}>
+            <Button
+              color="inherit"
+              onClick={handleLogout}
+              sx={{
+                fontWeight: 600,
+                textTransform: "none",
+                borderRadius: 2,
+                px: 2,
+                py: 1,
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  background: "rgba(255,255,255,0.15)",
+                  transform: "translateY(-2px)",
+                },
+              }}
+            >
               Logout
             </Button>
 
-          </Box>
+          </Stack>
 
         </Toolbar>
       </AppBar>

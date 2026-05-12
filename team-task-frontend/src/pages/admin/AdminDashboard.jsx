@@ -125,33 +125,48 @@ export default function AdminDashboard() {
   }
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-      <Box sx={{ width: "100%", maxWidth: "1100px", p: 3 }}>
+    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" }}>
+      <Box sx={{ maxWidth: "1200px", mx: "auto" }}>
 
         {/* HEADER */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+        <Box sx={{ mb: 5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
             Admin Dashboard
           </Typography>
-          <Typography color="text.secondary">
+          <Typography color="text.secondary" variant="body2">
             Manage tasks and employees efficiently.
           </Typography>
         </Box>
 
-        {/* STATS */}
-        <Grid container spacing={4} sx={{ mb: 5 }} justifyContent="center">
+        {/* STATS CARDS */}
+        <Grid container spacing={3} sx={{ mb: 5 }}>
           {cards.map((card, i) => (
             <Grid item xs={12} sm={6} md={3} key={i}>
-              <Card sx={{ borderRadius: 4, boxShadow: 3 }}>
-                <CardContent>
-                  <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Card
+                sx={{
+                  borderRadius: 3,
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                  background: "white",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <Box>
-                      <Typography color="text.secondary">{card.title}</Typography>
-                      <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
+                      <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                        {card.title}
+                      </Typography>
+                      <Typography variant="h3" sx={{ fontWeight: 700, mt: 1.5, color: "#1e293b" }}>
                         {card.value}
                       </Typography>
                     </Box>
-                    {card.icon}
+                    <Box sx={{ opacity: 0.15 }}>
+                      {card.icon}
+                    </Box>
                   </Box>
                 </CardContent>
               </Card>
@@ -160,15 +175,25 @@ export default function AdminDashboard() {
         </Grid>
 
         {/* CREATE TASK */}
-        <Paper sx={{ p: 3, borderRadius: 4, mb: 4 }}>
+        <Paper sx={{ p: 4, borderRadius: 3, mb: 4, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}>
 
           {/* HEADER + BUTTON */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              Create Task
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Create New Task
             </Typography>
 
-            <Button variant="contained" onClick={handleCreateTask}>
+            <Button
+              variant="contained"
+              onClick={handleCreateTask}
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 600,
+                px: 3,
+                background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+              }}
+            >
               Create Task
             </Button>
           </Box>
@@ -234,12 +259,13 @@ export default function AdminDashboard() {
         </Paper>
 
         {/* TASK TABLE */}
-        <Paper sx={{ p: 3, borderRadius: 4 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-            Recent Tasks
-          </Typography>
-
-          <Divider sx={{ mb: 2 }} />
+        <Paper sx={{ borderRadius: 3, boxShadow: "0 4px 12px rgba(0,0,0,0.08)", overflow: "hidden" }}>
+          <Box sx={{ p: 4, background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Recent Tasks
+            </Typography>
+          </Box>
+          <Box sx={{ overflowX: "auto" }}>
 
           <TableContainer>
             <Table>
@@ -271,7 +297,7 @@ export default function AdminDashboard() {
 
             </Table>
           </TableContainer>
-
+          </Box>
         </Paper>
 
       </Box>
