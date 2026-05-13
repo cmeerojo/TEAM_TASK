@@ -22,6 +22,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Avatar,
+  Stack,
 } from "@mui/material";
 
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -115,6 +117,45 @@ export default function AdminDashboard() {
     { title: "Completed", value: completedTasks, icon: <CheckCircleIcon sx={{ fontSize: 40 }} /> },
     { title: "Pending", value: pendingTasks, icon: <PendingActionsIcon sx={{ fontSize: 40 }} /> },
   ];
+
+  const BASE_URL = import.meta.env.VITE_API_BASE || "http://localhost:8000";
+
+  const buildAvatarUrl = (avatar) => {
+    if (!avatar) return undefined;
+    if (avatar.startsWith("http")) return avatar;
+    if (avatar.startsWith("/")) return `${BASE_URL}${avatar}`;
+    return `${BASE_URL}/storage/${avatar}`;
+  };
+
+  const getUserAvatar = (user) => {
+    if (!user) return undefined;
+    const raw =
+      user.avatar_url ||
+      user.avatar ||
+      user.profile_picture ||
+      user.image ||
+      null;
+    return buildAvatarUrl(raw);
+  };
+
+  const renderAssignedUsers = (users) => (
+    <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+      {users?.length ? (
+        users.map((member) => (
+          <Stack key={member.id} direction="row" spacing={0.75} alignItems="center">
+            <Avatar src={getUserAvatar(member)} sx={{ width: 24, height: 24 }}>
+              {member.name?.charAt(0)}
+            </Avatar>
+            <Typography variant="body2">{member.name}</Typography>
+          </Stack>
+        ))
+      ) : (
+        <Typography variant="body2" color="text.secondary">
+          —
+        </Typography>
+      )}
+    </Stack>
+  );
 
   if (loading) {
     return (
@@ -292,9 +333,7 @@ export default function AdminDashboard() {
                       </Box>
                     </TableCell>
 
-                    <TableCell>
-                      {task.users?.map((u) => u.name).join(", ")}
-                    </TableCell>
+                    <TableCell>{renderAssignedUsers(task.users)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

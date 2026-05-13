@@ -113,6 +113,17 @@ export default function EmployeeDashboard() {
     return buildAvatarUrl(raw);
   };
 
+  const getUserAvatar = (user) => {
+    if (!user) return undefined;
+    const raw =
+      user.avatar_url ||
+      user.avatar ||
+      user.profile_picture ||
+      user.image ||
+      null;
+    return buildAvatarUrl(raw);
+  };
+
   const statusStyles = {
     completed: { bgcolor: "#d1fae5", color: "#065f46" },
     in_progress: { bgcolor: "#dbeafe", color: "#1e40af" },
@@ -241,9 +252,27 @@ export default function EmployeeDashboard() {
                       <Typography variant="body2">{task.creator?.name}</Typography>
                     </Stack>
 
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                      Team: {task.users?.map((u) => u.name).join(", ") || "—"}
-                    </Typography>
+                    <Box sx={{ mt: 1 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.75 }}>
+                        Team:
+                      </Typography>
+                      <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                        {task.users?.length ? (
+                          task.users.map((member) => (
+                            <Stack key={member.id} direction="row" spacing={0.75} alignItems="center">
+                              <Avatar src={getUserAvatar(member)} sx={{ width: 24, height: 24 }}>
+                                {member.name?.charAt(0)}
+                              </Avatar>
+                              <Typography variant="body2">{member.name}</Typography>
+                            </Stack>
+                          ))
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">
+                            —
+                          </Typography>
+                        )}
+                      </Stack>
+                    </Box>
                   </CardContent>
 
                   <CardActions sx={{ p: 2 }}>
@@ -348,9 +377,29 @@ export default function EmployeeDashboard() {
                         <Typography variant="caption" sx={{ color: "#475569", display: "block" }}>
                           Created by: {task.creator?.name || "Unknown"}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 1.5 }}>
-                          Team: {task.users?.map((u) => u.name).join(", ") || "—"}
-                        </Typography>
+                        <Box sx={{ mb: 1.5 }}>
+                          <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 0.75 }}>
+                            Team:
+                          </Typography>
+                          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                            {task.users?.length ? (
+                              task.users.map((member) => (
+                                <Stack key={member.id} direction="row" spacing={0.75} alignItems="center">
+                                  <Avatar src={getUserAvatar(member)} sx={{ width: 22, height: 22 }}>
+                                    {member.name?.charAt(0)}
+                                  </Avatar>
+                                  <Typography variant="caption" sx={{ color: "#475569" }}>
+                                    {member.name}
+                                  </Typography>
+                                </Stack>
+                              ))
+                            ) : (
+                              <Typography variant="caption" sx={{ color: "#475569" }}>
+                                —
+                              </Typography>
+                            )}
+                          </Stack>
+                        </Box>
 
                         <Box sx={{ display: "flex", gap: 1 }}>
                           <Button

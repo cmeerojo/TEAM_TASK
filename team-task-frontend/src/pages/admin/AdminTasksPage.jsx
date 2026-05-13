@@ -19,6 +19,8 @@ import {
   InputLabel,
   FormControl,
   ButtonGroup,
+  Avatar,
+  Stack,
 } from "@mui/material";
 
 // 🔥 ICONS
@@ -40,6 +42,7 @@ export default function AdminTasksPage() {
   const [description, setDescription] = useState("");
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [status, setStatus] = useState("");
+  const BASE_URL = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
   useEffect(() => {
     fetchData();
@@ -123,6 +126,24 @@ export default function AdminTasksPage() {
     }
   };
 
+  const buildAvatarUrl = (avatar) => {
+    if (!avatar) return undefined;
+    if (avatar.startsWith("http")) return avatar;
+    if (avatar.startsWith("/")) return `${BASE_URL}${avatar}`;
+    return `${BASE_URL}/storage/${avatar}`;
+  };
+
+  const getUserAvatar = (user) => {
+    if (!user) return undefined;
+    const raw =
+      user.avatar_url ||
+      user.avatar ||
+      user.profile_picture ||
+      user.image ||
+      null;
+    return buildAvatarUrl(raw);
+  };
+
   const getStatusBadge = (status) => {
     const base = {
       display: "inline-block",
@@ -152,6 +173,25 @@ export default function AdminTasksPage() {
         };
     }
   };
+
+  const renderAssignedUsers = (users, avatarSize = 24, textVariant = "body2") => (
+    <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+      {users?.length ? (
+        users.map((member) => (
+          <Stack key={member.id} direction="row" spacing={0.75} alignItems="center">
+            <Avatar src={getUserAvatar(member)} sx={{ width: avatarSize, height: avatarSize }}>
+              {member.name?.charAt(0)}
+            </Avatar>
+            <Typography variant={textVariant}>{member.name}</Typography>
+          </Stack>
+        ))
+      ) : (
+        <Typography variant={textVariant} color="text.secondary">
+          —
+        </Typography>
+      )}
+    </Stack>
+  );
 
   return (
     <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh", overflowX: "hidden" }}>
@@ -221,9 +261,7 @@ export default function AdminTasksPage() {
                   </Box>
                 </TableCell>
 
-                <TableCell>
-                  {task.users?.map((u) => u.name).join(", ")}
-                </TableCell>
+                <TableCell>{renderAssignedUsers(task.users)}</TableCell>
 
                 <TableCell>{task.creator?.name}</TableCell>
 
@@ -361,9 +399,12 @@ export default function AdminTasksPage() {
                           </Typography>
                         ) : null}
 
-                        <Typography variant="caption" sx={{ color: "#475569", display: "block" }}>
-                          Assigned: {task.users?.map((u) => u.name).join(", ") || "No one"}
-                        </Typography>
+                        <Box sx={{ mb: 1.5 }}>
+                          <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 0.75 }}>
+                            Assigned:
+                          </Typography>
+                          {renderAssignedUsers(task.users, 22, "caption")}
+                        </Box>
                         <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 1.5 }}>
                           Created by: {task.creator?.name || "Unknown"}
                         </Typography>
