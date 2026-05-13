@@ -28,7 +28,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 export default function AdminTasksPage() {
   const [tasks, setTasks] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem("adminTaskViewMode") || "list";
+  });
   const [draggedTaskId, setDraggedTaskId] = useState(null);
 
   const [open, setOpen] = useState(false);
@@ -42,6 +44,10 @@ export default function AdminTasksPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("adminTaskViewMode", viewMode);
+  }, [viewMode]);
 
   const fetchData = async () => {
     const taskRes = await api.get("/tasks");

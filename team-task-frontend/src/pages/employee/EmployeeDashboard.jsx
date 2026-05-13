@@ -21,7 +21,9 @@ const BASE_URL = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
 export default function EmployeeDashboard() {
   const [tasks, setTasks] = useState([]);
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem("employeeTaskViewMode") || "list";
+  });
   const [draggedTaskId, setDraggedTaskId] = useState(null);
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -34,6 +36,10 @@ export default function EmployeeDashboard() {
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("employeeTaskViewMode", viewMode);
+  }, [viewMode]);
 
   const updateStatus = useCallback(async (taskId, status) => {
     await api.patch(`/tasks/${taskId}/status`, { status });
