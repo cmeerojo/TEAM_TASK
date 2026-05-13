@@ -218,6 +218,7 @@ export default function AppLayout() {
         sx={{
           background: "#f8fafc",
           width: "100%",
+          overflowX: "hidden",
         }}
       >
         <Outlet />
