@@ -374,9 +374,19 @@ export default function EmployeeDashboard() {
                           </Typography>
                         ) : null}
 
-                        <Typography variant="caption" sx={{ color: "#475569", display: "block" }}>
-                          Created by: {task.creator?.name || "Unknown"}
-                        </Typography>
+                        <Box sx={{ mb: 1.5 }}>
+                          <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 0.75 }}>
+                            Created by:
+                          </Typography>
+                          <Stack direction="row" spacing={0.75} alignItems="center">
+                            <Avatar src={getCreatorAvatar(task.creator)} sx={{ width: 22, height: 22 }}>
+                              {task.creator?.name?.charAt(0)}
+                            </Avatar>
+                            <Typography variant="caption" sx={{ color: "#475569" }}>
+                              {task.creator?.name || "Unknown"}
+                            </Typography>
+                          </Stack>
+                        </Box>
                         <Box sx={{ mb: 1.5 }}>
                           <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 0.75 }}>
                             Team:

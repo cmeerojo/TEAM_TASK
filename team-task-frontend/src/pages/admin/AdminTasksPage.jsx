@@ -263,7 +263,14 @@ export default function AdminTasksPage() {
 
                 <TableCell>{renderAssignedUsers(task.users)}</TableCell>
 
-                <TableCell>{task.creator?.name}</TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={0.75} alignItems="center">
+                    <Avatar src={getUserAvatar(task.creator)} sx={{ width: 24, height: 24 }}>
+                      {task.creator?.name?.charAt(0)}
+                    </Avatar>
+                    <Typography variant="body2">{task.creator?.name || "Unknown"}</Typography>
+                  </Stack>
+                </TableCell>
 
                 <TableCell>
                   <Box sx={{ display: "flex", gap: 1 }}>
@@ -405,9 +412,19 @@ export default function AdminTasksPage() {
                           </Typography>
                           {renderAssignedUsers(task.users, 22, "caption")}
                         </Box>
-                        <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 1.5 }}>
-                          Created by: {task.creator?.name || "Unknown"}
-                        </Typography>
+                        <Box sx={{ mb: 1.5 }}>
+                          <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 0.75 }}>
+                            Created by:
+                          </Typography>
+                          <Stack direction="row" spacing={0.75} alignItems="center">
+                            <Avatar src={getUserAvatar(task.creator)} sx={{ width: 22, height: 22 }}>
+                              {task.creator?.name?.charAt(0)}
+                            </Avatar>
+                            <Typography variant="caption" sx={{ color: "#475569" }}>
+                              {task.creator?.name || "Unknown"}
+                            </Typography>
+                          </Stack>
+                        </Box>
 
                         <Box sx={{ display: "flex", gap: 1 }}>
                           <Button
