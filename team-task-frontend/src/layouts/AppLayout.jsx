@@ -215,12 +215,11 @@ export default function AppLayout() {
 
       {/* PAGE CONTENT */}
       <Box
-  sx={{
-    p: 3,
-    minHeight: "calc(100vh - 64px)",
-    background: "#f8fafc",
-  }}
->
+        sx={{
+          background: "#f8fafc",
+          width: "100%",
+        }}
+      >
         <Outlet />
       </Box>
     </>

@@ -125,8 +125,8 @@ export default function AdminDashboard() {
   }
 
   return (
-    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" }}>
-      <Box sx={{ maxWidth: "1200px", mx: "auto" }}>
+    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", overflow: "hidden", overflowX: "hidden" }}>
+      <Box sx={{ maxWidth: "1200px", mx: "auto", width: "100%", overflowX: "hidden" }}>
 
         {/* HEADER */}
         <Box sx={{ mb: 5 }}>
@@ -270,9 +270,8 @@ export default function AdminDashboard() {
               Recent Tasks
             </Typography>
           </Box>
-          <Box sx={{ overflowX: "auto" }}>
 
-          <TableContainer>
+          <TableContainer sx={{ overflow: "hidden" }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -302,7 +301,6 @@ export default function AdminDashboard() {
 
             </Table>
           </TableContainer>
-          </Box>
         </Paper>
 
       </Box>

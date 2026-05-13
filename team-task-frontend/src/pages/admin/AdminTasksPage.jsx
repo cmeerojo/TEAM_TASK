@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 
 import {
-  Container,
   Typography,
   Table,
   TableBody,
@@ -19,6 +18,7 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  ButtonGroup,
 } from "@mui/material";
 
 // 🔥 ICONS
@@ -28,6 +28,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 export default function AdminTasksPage() {
   const [tasks, setTasks] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [viewMode, setViewMode] = useState("list");
+  const [draggedTaskId, setDraggedTaskId] = useState(null);
 
   const [open, setOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -49,12 +51,18 @@ export default function AdminTasksPage() {
     setEmployees(userRes.data);
   };
 
+  const normalizeStatus = (value) => {
+    if (!value) return "pending";
+    if (value === "in progress") return "in_progress";
+    return value;
+  };
+
   const handleOpen = (task) => {
     setSelectedTask(task);
     setTitle(task.title);
     setDescription(task.description);
     setAssignedUsers(task.users.map((u) => u.id));
-    setStatus(task.status);
+    setStatus(normalizeStatus(task.status));
     setOpen(true);
   };
 
@@ -79,6 +87,34 @@ export default function AdminTasksPage() {
     if (!confirm("Are you sure?")) return;
     await api.delete(`/tasks/${id}`);
     fetchData();
+  };
+
+  const handleDropStatus = async (nextStatus) => {
+    if (!draggedTaskId) return;
+
+    const draggedTask = tasks.find((task) => task.id === draggedTaskId);
+    if (!draggedTask) return;
+
+    if (normalizeStatus(draggedTask.status) === nextStatus) {
+      setDraggedTaskId(null);
+      return;
+    }
+
+    try {
+      const res = await api.patch(`/tasks/${draggedTaskId}/status`, {
+        status: nextStatus,
+      });
+
+      const updatedTask = res.data;
+      setTasks((prev) =>
+        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
+      );
+    } catch (error) {
+      console.error("Failed to update task status", error);
+      fetchData();
+    } finally {
+      setDraggedTaskId(null);
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -112,20 +148,49 @@ export default function AdminTasksPage() {
   };
 
   return (
-    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh" }}>
-      <Box sx={{ maxWidth: "1200px", mx: "auto" }}>
+    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh", overflowX: "hidden" }}>
+      <Box sx={{ maxWidth: "1200px", mx: "auto", width: "100%", overflowX: "hidden" }}>
         {/* HEADER */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
-            Manage Tasks
-          </Typography>
-          <Typography color="text.secondary" variant="body2">
-            View and edit all tasks assigned to your team.
-          </Typography>
+        <Box
+          sx={{
+            mb: 4,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: { xs: "flex-start", sm: "center" },
+            gap: 2,
+            flexWrap: "wrap",
+          }}
+        >
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+              Manage Tasks
+            </Typography>
+            <Typography color="text.secondary" variant="body2">
+              View and edit all tasks assigned to your team.
+            </Typography>
+          </Box>
+
+          <ButtonGroup variant="outlined" aria-label="task view mode">
+            <Button
+              variant={viewMode === "list" ? "contained" : "outlined"}
+              onClick={() => setViewMode("list")}
+              sx={{ textTransform: "none", fontWeight: 600 }}
+            >
+              List View
+            </Button>
+            <Button
+              variant={viewMode === "columns" ? "contained" : "outlined"}
+              onClick={() => setViewMode("columns")}
+              sx={{ textTransform: "none", fontWeight: 600 }}
+            >
+              Column View
+            </Button>
+          </ButtonGroup>
         </Box>
 
-        {/* TABLE */}
-        <Paper sx={{ borderRadius: 3, boxShadow: "0 4px 12px rgba(0,0,0,0.08)", overflow: "hidden" }}>
+        {viewMode === "list" ? (
+          /* TABLE */
+          <Paper sx={{ borderRadius: 3, boxShadow: "0 4px 12px rgba(0,0,0,0.08)", overflow: "hidden" }}>
           <TableContainer>
             <Table>
               <TableHead sx={{ background: "#f8fafc" }}>
@@ -205,7 +270,161 @@ export default function AdminTasksPage() {
 
             </Table>
           </TableContainer>
-        </Paper>
+          </Paper>
+        ) : (
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+              gap: 2,
+            }}
+          >
+            {[
+              { status: "pending", label: "Pending" },
+              { status: "in_progress", label: "In Progress" },
+              { status: "completed", label: "Completed" },
+            ].map((column) => {
+              const columnTasks = tasks.filter(
+                (task) => normalizeStatus(task.status) === column.status,
+              );
+
+              return (
+                <Paper
+                  key={column.status}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => handleDropStatus(column.status)}
+                  sx={{
+                    borderRadius: 3,
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                    backgroundColor: "#f8fafc",
+                    p: 2,
+                    minHeight: 520,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mb: 2,
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                      {column.label}
+                    </Typography>
+                    <Box
+                      sx={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        px: 1.2,
+                        py: 0.4,
+                        borderRadius: 2,
+                        backgroundColor: "#e2e8f0",
+                        color: "#334155",
+                      }}
+                    >
+                      {columnTasks.length}
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                    {columnTasks.map((task) => (
+                      <Paper
+                        key={task.id}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("text/plain", String(task.id));
+                          setDraggedTaskId(task.id);
+                        }}
+                        onDragEnd={() => setDraggedTaskId(null)}
+                        sx={{
+                          p: 2,
+                          borderRadius: 2,
+                          border: "1px solid #e2e8f0",
+                          cursor: "grab",
+                          backgroundColor: "white",
+                          "&:active": { cursor: "grabbing" },
+                        }}
+                      >
+                        <Typography sx={{ fontWeight: 700, mb: 0.5 }}>
+                          {task.title}
+                        </Typography>
+                        {task.description ? (
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            {task.description}
+                          </Typography>
+                        ) : null}
+
+                        <Typography variant="caption" sx={{ color: "#475569", display: "block" }}>
+                          Assigned: {task.users?.map((u) => u.name).join(", ") || "No one"}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "#475569", display: "block", mb: 1.5 }}>
+                          Created by: {task.creator?.name || "Unknown"}
+                        </Typography>
+
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                          <Button
+                            onClick={() => handleOpen(task)}
+                            variant="outlined"
+                            size="small"
+                            startIcon={<EditIcon />}
+                            sx={{
+                              borderRadius: 2,
+                              textTransform: "none",
+                              fontWeight: 600,
+                              borderColor: "#3b82f6",
+                              color: "#3b82f6",
+                              "&:hover": {
+                                background: "#eff6ff",
+                                borderColor: "#2563eb",
+                              },
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            onClick={() => handleDelete(task.id)}
+                            variant="outlined"
+                            size="small"
+                            startIcon={<DeleteIcon />}
+                            sx={{
+                              borderRadius: 2,
+                              textTransform: "none",
+                              fontWeight: 600,
+                              borderColor: "#ef4444",
+                              color: "#ef4444",
+                              "&:hover": {
+                                background: "#fef2f2",
+                                borderColor: "#dc2626",
+                              },
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </Box>
+                      </Paper>
+                    ))}
+
+                    {columnTasks.length === 0 ? (
+                      <Box
+                        sx={{
+                          border: "1px dashed #cbd5e1",
+                          borderRadius: 2,
+                          p: 2,
+                          textAlign: "center",
+                          color: "#64748b",
+                          fontSize: 14,
+                        }}
+                      >
+                        No tasks here yet.
+                      </Box>
+                    ) : null}
+                  </Box>
+                </Paper>
+              );
+            })}
+          </Box>
+        )}
 
         {/* MODAL */}
         <Modal open={open} onClose={handleClose}>

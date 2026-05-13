@@ -127,8 +127,8 @@ export default function AdminEmployeesPage() {
   };
 
   return (
-    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh" }}>
-      <Box sx={{ maxWidth: "1200px", mx: "auto" }}>
+    <Box sx={{ width: "100%", p: { xs: 2, md: 4 }, background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", minHeight: "100vh", overflow: "hidden", overflowX: "hidden" }}>
+      <Box sx={{ maxWidth: "1200px", mx: "auto", width: "100%", overflowX: "hidden" }}>
         {/* HEADER */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
