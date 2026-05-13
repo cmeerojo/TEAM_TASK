@@ -4,7 +4,6 @@ import api from "../../api/axios";
 const BASE_URL = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
 import {
-  Container,
   Typography,
   Card,
   CardContent,
@@ -84,13 +83,47 @@ export default function AdminEmployeesPage() {
     setSelectedEmployee(null);
   };
 
-  // Avatar src is already normalized on load — just use it directly
+  
   const getAvatarSrc = (avatarUrl) => avatarUrl || undefined;
 
-  // Capitalize first letter for role badges
-  const capitalize = (s) => {
-    if (!s) return "";
-    return s.charAt(0).toUpperCase() + s.slice(1);
+  const formatLabel = (value) => {
+    if (!value) return "";
+    return String(value)
+      .replace(/_/g, " ")
+      .split(" ")
+      .filter(Boolean)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  const getStatusBadge = (status) => {
+    const base = {
+      display: "inline-block",
+      px: 2,
+      py: 0.5,
+      borderRadius: 2,
+      fontSize: 12,
+      fontWeight: "bold",
+    };
+
+    switch (status) {
+      case "completed":
+        return {
+          label: "Completed",
+          sx: { ...base, backgroundColor: "#d1fae5", color: "#065f46" },
+        };
+      case "in progress":
+      case "in_progress":
+        return {
+          label: "In Progress",
+          sx: { ...base, backgroundColor: "#dbeafe", color: "#1e40af" },
+        };
+      default:
+        return {
+          label: status ? formatLabel(status) : "Pending",
+          sx: { ...base, backgroundColor: "#fef3c7", color: "#92400e" },
+        };
+    }
   };
 
   return (
@@ -127,7 +160,7 @@ export default function AdminEmployeesPage() {
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 
-                  {/* 🔥 GRID AVATAR FIXED */}
+                  {/*GRID AVATAR */}
                   <Avatar src={emp.avatar_url || undefined}>
                     {emp.name?.charAt(0)}
                   </Avatar>
@@ -159,7 +192,7 @@ export default function AdminEmployeesPage() {
               {/* HEADER */}
               <Box sx={{ textAlign: "center" }}>
 
-                {/* 🔥 DRAWER AVATAR FIXED */}
+                {/*DRAWER AVATAR */}
                 <Avatar
                   src={selectedEmployee.avatar_url || undefined}
                   sx={{ width: 80, height: 80, mx: "auto" }}
@@ -176,7 +209,7 @@ export default function AdminEmployeesPage() {
                 </Typography>
 
                 <Chip
-                  label={capitalize(selectedEmployee.role)}
+                  label={formatLabel(selectedEmployee.role)}
                   sx={{ mt: 1 }}
                   color="primary"
                 />
@@ -223,11 +256,9 @@ export default function AdminEmployeesPage() {
                       {task.title}
                     </Typography>
 
-                    <Chip
-                      label={task.status}
-                      size="small"
-                      sx={{ mt: 0.5 }}
-                    />
+                    <Box sx={{ mt: 0.5, ...getStatusBadge(task.status).sx }}>
+                      {getStatusBadge(task.status).label}
+                    </Box>
                   </Box>
                 ))}
               </Box>

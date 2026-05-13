@@ -218,21 +218,26 @@ export default function AdminDashboard() {
               />
             </Grid>
 
-            {/* 🔥 FIXED: ULTRA WIDE DROPDOWN MENU ONLY */}
+            {/*ULTRA WIDE DROPDOWN MENU ONLY */}
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel>Assign Employees</InputLabel>
+                <InputLabel id="assign-employees-label" shrink>
+                  Assign Employees
+                </InputLabel>
 
                 <Select
+                  labelId="assign-employees-label"
+                  id="assign-employees-select"
                   multiple
+                  displayEmpty
                   value={selectedUsers}
                   onChange={(e) => setSelectedUsers(e.target.value)}
                   label="Assign Employees"
                   MenuProps={{
                     PaperProps: {
                       sx: {
-                        minWidth: "700px",   // 🔥 wide dropdown menu
-                        maxWidth: "900px",
+                        minWidth: "800px",   //  wide dropdown menu
+                        maxWidth: "1000px",
                       },
                     },
                   }}
