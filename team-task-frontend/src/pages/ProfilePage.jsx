@@ -19,6 +19,9 @@ export default function ProfilePage() {
   const [name, setName] = useState(currentUser?.name || "");
   const [email, setEmail] = useState(currentUser?.email || "");
   const [file, setFile] = useState(null);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleUpdate = async () => {
 
@@ -31,6 +34,21 @@ export default function ProfilePage() {
 
       if (file) {
         formData.append("avatar", file);
+      }
+
+      // handle password change if provided
+      if (newPassword) {
+        if (!currentPassword) {
+          alert("Please enter your current password to change your password.");
+          return;
+        }
+        if (newPassword !== confirmPassword) {
+          alert("New password and confirmation do not match.");
+          return;
+        }
+        formData.append("current_password", currentPassword);
+        formData.append("new_password", newPassword);
+        formData.append("new_password_confirmation", confirmPassword);
       }
 
       // UPDATE PROFILE
@@ -133,6 +151,36 @@ export default function ProfilePage() {
             style={{
               marginBottom: "20px",
             }}
+          />
+
+          {/* PASSWORD CHANGE */}
+          <Typography variant="subtitle1" sx={{ mt: 1, mb: 1 }}>
+            Change Password
+          </Typography>
+          <TextField
+            fullWidth
+            label="Current Password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="New Password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            helperText="Minimum 8 characters"
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Confirm New Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            sx={{ mb: 2 }}
           />
 
           {/* SAVE BUTTON */}

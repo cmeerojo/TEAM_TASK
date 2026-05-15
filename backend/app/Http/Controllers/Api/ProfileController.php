@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -30,11 +31,23 @@ class ProfileController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email',
                 'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+                'current_password' => 'nullable|string',
+                'new_password' => 'nullable|string|min:8|confirmed',
             ]);
 
             // UPDATE USER INFO
             $user->name = $request->name;
             $user->email = $request->email;
+
+            // HANDLE PASSWORD CHANGE (optional)
+            if ($request->filled('new_password')) {
+                // require current password and verify
+                if (! $request->filled('current_password') || ! Hash::check($request->current_password, $user->password)) {
+                    return response()->json(['message' => 'Current password is incorrect'], 422);
+                }
+
+                $user->password = bcrypt($request->new_password);
+            }
 
             $user->save();
 
